@@ -2,6 +2,7 @@
 #include<string.h> 
 #include<assert.h> 
 char* my_input = 0;
+int input_len = -1;
 int cur_position = 0;
 
 int pos_cur() {
@@ -13,12 +14,12 @@ void pos_set(int i) {
 }
 
 bool pos_eof() {
-  return pos_cur() == strlen(my_input);
+  return pos_cur() == input_len;
 }
 
 int next_token() {
   int i = pos_cur();
-  if ((i+1) > strlen(my_input)){
+  if ((i+1) > input_len){
     return -1;
   }
   pos_set(i+1);
@@ -167,6 +168,7 @@ bool mul_op() {
 
 int main(int argc, char** argv){
   my_input = argv[1];
+  input_len = strlen(my_input);
   assert(expr());
   assert(pos_eof());
 }
