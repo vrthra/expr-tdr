@@ -32,9 +32,13 @@ bool match(int t) {
 
 bool digit();
 bool digits();
-bool fact();
 bool term();
 bool expr();
+bool product();
+bool pstar();
+bool sstar();
+bool sum();
+bool value();
 bool add_op();
 bool mul_op();
 
@@ -45,63 +49,99 @@ bool P_CLOSE(){
   return match(')');
 }
 
-bool expr_1(){
-  if (!term()) return false;
-  if (!add_op()) return false;
-  if (!expr()) return false;
+bool expr_1(){/**/
+  if (!sum()) return false;
   return true;
 }
 
-bool expr_2(){
-  if (!term()) return false;
-  return true;
-}
-
-bool expr() {
-  int o_pos = pos_cur();
+bool expr() {/**/
   if (expr_1()) return true;
-  pos_set(o_pos);
-  if (expr_2()) return true;
-  pos_set(o_pos);
   return false;
 }
 
-bool term_1() {
-  if (!fact()) return false;
-  if (!mul_op()) return false;
-  if (!term()) return false;
+
+bool sum_1(){/**/
+  if (!product()) return false;
+  if (!sstar()) return false;
   return true;
 }
 
-bool term_2() {
-  return fact();
+bool sum() {/**/
+  if (sum_1()) return true;
+  return false;
 }
 
-bool term() {
+
+bool sstar_1() {/**/
+  if (!add_op()) return false;
+  if (!product()) return false;
+  if (!sstar()) return false;
+  return true;
+}
+
+bool sstar_2() {/**/
+  /*epsilon*/
+  return true;
+}
+
+bool sstar() {/**/
   int o_pos = pos_cur();
-  if (term_1()) return true;
+  if (sstar_1()) return true;
   pos_set(o_pos);
-  if (term_2()) return true;
+  if (sstar_2()) return true;
   pos_set(o_pos);
   return false;
 }
 
-bool fact_1() {
+bool pstar_1() {/**/
+  if (!mul_op()) return false;
+  if (!value()) return false;
+  if (!pstar()) return false;
+  return true;
+}
+
+bool pstar_2() {/**/
+  /*epsilon*/
+  return true;
+}
+
+bool pstar() {/**/
+  int o_pos = pos_cur();
+  if (pstar_1()) return true;
+  pos_set(o_pos);
+  if (pstar_2()) return true;
+  pos_set(o_pos);
+  return false;
+}
+
+bool product_1() {/**/
+  if (!value()) return false;
+  if (!pstar()) return false;
+  return true;
+}
+
+bool product() {/**/
+  if (product_1()) return true;
+  return false;
+}
+
+bool value_1() {/**/
+  if (!digits()) return false;
+  return true;
+}
+
+bool value_2() {/**/
   if (!P_OPEN()) return false;
   if (!expr()) return false;
   if (!P_CLOSE()) return false;
   return true;
 }
 
-bool fact_2() {
-  return digits();
-}
-
-bool fact() {
+bool value() {/**/
   int o_pos = pos_cur();
-  if (fact_1()) return true;
+  if (value_1()) return true;
   pos_set(o_pos);
-  if (fact_2()) return true;
+  if (value_2()) return true;
   pos_set(o_pos);
   return false;
 }
@@ -134,6 +174,8 @@ bool digit() {
   if (match('3')) return true;
   pos_set(o_pos);
   if (match('4')) return true;
+  pos_set(o_pos);
+  if (match('5')) return true;
   pos_set(o_pos);
   if (match('6')) return true;
   pos_set(o_pos);
@@ -169,7 +211,10 @@ bool mul_op() {
 int main(int argc, char** argv){
   my_input = argv[1];
   input_len = strlen(my_input);
-  assert(expr());
-  assert(pos_eof());
+  int val = expr();
+  /*assert(val);
+  assert(pos_eof());*/
+  if(!val) return -1;
+  if(!pos_eof()) return -1;
 }
 
